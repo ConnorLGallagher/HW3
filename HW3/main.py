@@ -39,7 +39,8 @@ def index():
     if form.validate_on_submit():
         lname = form.name.data
         lgrade = form.grade.data
-        new = print(student(lname,lgrade))
+        new = student(lname,lgrade)
+        print(new)
         db.session.add(new)
         db.session.commit()
     return render_template('home.html', form=form,)
