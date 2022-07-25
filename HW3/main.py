@@ -32,10 +32,14 @@ class MyForm(FlaskForm):
     name=TextField('Enter name:')
     grade=IntegerField('Enter grade:')
     submit=SubmitField('Add')
+class MyForm2(FlaskForm):
+    id=IntegerField('Enter id:')
+    submit2=SubmitField('delete')
 db.create_all()
 @app.route('/', methods=['GET','POST'])
 def index():
     form= MyForm()
+    form2=MyForm2()
     if form.validate_on_submit():
         lname = form.name.data
         lgrade = form.grade.data
@@ -43,10 +47,21 @@ def index():
         print(new)
         db.session.add(new)
         db.session.commit()
-    return render_template('home.html', form=form,)
-@app.route('/report')
+    elif form2.validate_on_submit():
+        delid=form2.id.data
+        print(delid)
+        delstu=student.query.get(delid)
+        db.session.delete(delstu)
+        db.session.commit()
+    return render_template('home.html', form=form, form2=form2)
+@app.route('/reportPass')
 def report():
-    return render_template('results.html')
+    s_pass=student.query.filter(student.grade>=70)
+    return render_template('results.html', case=s_pass.all())
+@app.route('/report85')
+def report2():
+    s_pass=student.query.filter(student.grade>=85)
+    return render_template('results.html', case=s_pass.all())   
 
 if __name__ == '__main__':
     app.run(debug=True)
